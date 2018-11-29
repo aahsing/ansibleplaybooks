@@ -1,2 +1,46 @@
 ---
+- name: configure nginx
+  hosts: nginx
+  vars_files:
+    - /home/ansible/playbooks/nginx/group_vars/appinfo.yml
+  tasks:
+    - name: copy nginx conf file
+      copy:
+        src: /home/ansible/playbooks/nginx/files/httpconf.template
+        dest: /etc/nginx/conf.d/{{ appname }}.conf
+      tags: http
 
+    - name: copy nginx conf file
+      copy:
+        src: /home/ansible/playbooks/nginx/files/httpsconf.template
+        dest: /etc/nginx/conf.d/{{ appname }}.conf
+      tags: https
+
+    - name: modify application name 
+      replace:
+        path: /etc/nginx/conf.d/{{ appname }}.conf
+        regexp: 'appname'
+        replace: {{ appname }}
+      tags:
+        - http
+        - https
+
+    - name: modify application server name 
+      replace:
+        path: /etc/nginx/conf.d/{{ appname }}.conf
+        regexp: 'appdns'
+        replace: {{ appdns }}
+      tags:
+        - http
+        - https
+
+    - name: modify application upstream server
+      lineinfile:
+        path: /etc/nginx/conf.d/{{ appname }}.conf
+        insertafter: 'sticky'
+        firstmatch: yes
+        line: 'server {{ item }}'
+      with_items: "{{ upstreams }}"
+      tags:
+        - http
+        - https
