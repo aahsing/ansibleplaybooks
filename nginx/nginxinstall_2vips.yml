@@ -1,0 +1,75 @@
+---
+############
+- name: install nginx and keepalived packages
+  hosts: nginx
+  tasks:
+    - name: install keepalived
+      yum:
+        name: keepalived
+        state: latest
+
+    - name: copy nginx repo
+      copy:
+        src: /etc/yum.repos.d/nginx.repo
+        dest: /etc/yum.repos.d/nginx.repo
+
+    - name: install nginx
+      yum:
+        name: nginx
+        state: latest
+
+    - name: replace nginx bin file
+      copy:
+        src: /home/ansible/files/nginx1222withsticky/nginx
+        dest: /usr/sbin/nginx
+
+###########################
+- name: config keepalived conf file of master nginx server
+  hosts: masternginx
+  tasks:
+    - name: copy keepalived file
+      copy:
+        src: /home/ansible/playbooks/nginx/files/keepalived/keepalived_2vips_master.conf
+
+- name: config keepalived conf file of backup nginx server
+  hosts: backupnginx
+  tasks:
+    - name: copy keepalived file
+      copy:
+        src: /home/ansible/playbooks/nginx/files/keepalived/keepalived_2vips_backup.conf
+        dest: /etc/keepalived/keepalived.conf
+
+- name: modify keepalived conf file
+  hosts: nginx
+  vars_files:
+    - /home/ansible/files/vips.yml
+  tasks:
+    - name: modify router id
+      replace:
+        path: /etc/keepalived/keepalived.conf
+        regexp: 'nginxhost'
+        replace: '{{ ansible_hostname }}'
+
+    - name: modify vip keepalived conf file
+      replace:
+        path: /etc/keepalived/keepalived.conf
+        regexp: 'nginxvip01'
+        replace: '{{ vip01 }}'
+
+    - name: modify vip keepalived conf file
+      replace:
+        path: /etc/keepalived/keepalived.conf
+        regexp: 'nginxvip02'
+        replace: '{{ vip02 }}'
+#############################
+- name: start and enable keepalived 
+  hosts: nginx
+  tasks:
+    - name: start and enable keepalived
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      with_items:
+        - nginx
+        - keepalived

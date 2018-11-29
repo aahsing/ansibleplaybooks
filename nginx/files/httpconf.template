@@ -1,0 +1,20 @@
+upstream  appname {
+    sticky;
+
+}
+
+server
+{
+    listen 80;
+    access_log syslog:server=192.168.9.201:8514,facility=local7,tag=appname,severity=info json_log;
+    server_name appdns;
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass_request_headers on;
+        client_max_body_size 512M;
+        proxy_pass      http://appname;
+    }
+}
