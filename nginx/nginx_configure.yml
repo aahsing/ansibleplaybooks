@@ -20,7 +20,7 @@
       replace:
         path: /etc/nginx/conf.d/{{ appname }}.conf
         regexp: 'appname'
-        replace: {{ appname }}
+        replace: '{{ appname }}'
       tags:
         - http
         - https
@@ -29,7 +29,7 @@
       replace:
         path: /etc/nginx/conf.d/{{ appname }}.conf
         regexp: 'appdns'
-        replace: {{ appdns }}
+        replace: '{{ appdns }}'
       tags:
         - http
         - https
@@ -39,8 +39,13 @@
         path: /etc/nginx/conf.d/{{ appname }}.conf
         insertafter: 'sticky'
         firstmatch: yes
-        line: 'server {{ item }}'
+        line: '    server {{ item }}'
       with_items: "{{ upstreams }}"
       tags:
         - http
         - https
+
+    - name: reload nginx service
+      service:
+        name: nginx
+        state: reloaded

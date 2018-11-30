@@ -20,7 +20,7 @@
 
     - name: replace nginx bin file
       copy:
-        src: /home/ansible/files/nginx1222withsticky/nginx
+        src: /home/ansible/playbooks/nginx/files/nginx1222withsticky/nginx
         dest: /usr/sbin/nginx
 
 ###########################
@@ -29,20 +29,21 @@
   tasks:
     - name: copy keepalived file
       copy:
-        src: /home/ansible/playbooks/nginx/files/keepalived/keepalived_2vips_master.conf
+        src: /home/ansible/playbooks/nginx/files/keepalived_2vips_master.conf
+        dest: /etc/keepalived/keepalived.conf
 
 - name: config keepalived conf file of backup nginx server
   hosts: backupnginx
   tasks:
     - name: copy keepalived file
       copy:
-        src: /home/ansible/playbooks/nginx/files/keepalived/keepalived_2vips_backup.conf
+        src: /home/ansible/playbooks/nginx/files/keepalived_2vips_backup.conf
         dest: /etc/keepalived/keepalived.conf
 
 - name: modify keepalived conf file
   hosts: nginx
   vars_files:
-    - /home/ansible/files/vips.yml
+    - /home/ansible/playbooks/nginx/group_vars/vips.yml
   tasks:
     - name: modify router id
       replace:
@@ -61,6 +62,18 @@
         path: /etc/keepalived/keepalived.conf
         regexp: 'nginxvip02'
         replace: '{{ vip02 }}'
+
+#############################
+- name: modify nginx.conf
+  hosts: nginx
+  tasks:
+    - name: override nginx.conf
+      copy: 
+        src: /home/ansible/playbooks/nginx/files/nginx.conf
+        dest: /etc/nginx/nginx.conf
+        backup: yes
+                                      
+
 #############################
 - name: start and enable keepalived 
   hosts: nginx
@@ -73,3 +86,31 @@
       with_items:
         - nginx
         - keepalived
+
+
+###############################
+- name: modify system kernel and limits
+  hosts: nginx
+  vars_files:
+    - /home/ansible/playbooks/nginx/group_vars/sys_limits.yml
+  tasks:
+    - name: modify kernel
+      lineinfile:
+        path: /etc/sysctl.conf
+        line: "{{ item }}"
+        backup: yes
+      with_items: "{{ kernelparas }}"
+ 
+    - name: modify system limits
+      lineinfile:
+        path: /etc/security/limits.conf
+        line: "{{ item }}"
+        backup: yes
+      with_items: "{{ limits }}"
+
+    - name: modify limits.d default 
+      replace:
+        path: /etc/security/limits.d/20-nproc.conf
+        regexp: '^\*'
+        replace: '#*'
+        backup: yes
