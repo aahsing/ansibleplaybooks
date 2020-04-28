@@ -1,0 +1,66 @@
+---
+- name: config ctdb
+  hosts: nass
+  vars_files: ./group_vars/nas.yml
+  tasks:
+    - name: create legacy directory
+      file: 
+       path: /etc/ctdb/events/legacy
+       state: directory
+
+    - name: create persistent directory
+      file: 
+       path: /var/lib/ctdb/persistent
+       state: directory
+    
+    - name: create state directory
+      file: 
+       path: /var/lib/ctdb/state
+       state: directory
+    
+    - name: configure nodes file
+      blockinfile:
+        path: /etc/ctdb/nodes
+        create: yes
+        marker: ""
+        block: |
+         {{ nas01 }} 
+         {{ nas02 }} 
+         {{ nas03 }} 
+
+    - name: configure public addresses
+      blockinfile:
+        path: /etc/ctdb/public_addresses
+        create: yes
+        marker: ""
+        block: |
+         {{ item.address }}    {{ item.interface }}
+# Please add public address  and interface here
+      with_items:
+        - { address: 10.135.4.133, interface: bond0.1513 }
+
+    - name: configure recovery lock
+      lineinfile:
+        path: /etc/ctdb/ctdb.conf
+        line: '      recovery lock = !/usr/libexec/ctdb/ctdb_mutex_ceph_rados_helper ceph client.admin cephfs_data cephfs-nas.relock'
+    
+    - name: add samba to ctdb--create volatile directory
+      file:
+        path: /var/lib/ctdb/volatile
+        state: directory
+
+    - name: add ip script to ctdb --- configure scripts
+      command: ctdb event script enable legacy 10.interface
+
+    - name: add samba to ctdb --- configure scripts
+      command: ctdb event script enable legacy 50.samba
+
+    - name: add nfs to ctdb --- configure scripts
+      command: ctdb event script enable legacy 60.nfs
+   
+    - name: copy nfs callout file
+      copy:
+        src: ./files/nfs-linux-kernel-callout
+        dest: /etc/ctdb/nfs-linux-kernel-callout
+       
+         

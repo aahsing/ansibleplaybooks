@@ -1,0 +1,44 @@
+---
+- name: configure nfs
+  hosts: nass
+  vars_files:
+    - ./group_vars/nas.yml
+  tasks:
+    - name: add a default entry to export file
+      lineinfile:
+        path: /etc/exports
+        line: '/cephfs *(ro,fsid=1000)'
+
+    - name: disalbe nfsv4
+      lineinfile:
+       path: /etc/sysconfig/nfs
+       regexp: 'RPCNFSDARGS=""'
+       line: RPCNFSDARGS="-N 4" 
+       backup: yes
+   
+    - name: configure fixed service port
+      blockinfile:
+       path: /etc/sysconfig/nfs
+       insertafter: EOF
+       block: |
+         NFS_HOSTNAME="{{ NFS_HOSTNAME }}"
+         STATD_PORT=61001
+         STATD_OUTGOING_PORT=61002
+         MOUNTD_PORT=61003
+         RQUOTAD_PORT=61004
+         LOCKD_UDPPORT=61005
+         LOCKD_TCPPORT=61005
+         STATD_HA_CALLOUT="/etc/ctdb/statd-callout"   
+   
+    - name: modify nfs start args
+      lineinfile:
+       path: /etc/sysconfig/nfs
+       regexp: 'STATDARG=""'
+       line: STATDARG="-n ${NFS_HOSTNAME}"
+
+    - name: modify quotad start options
+      lineinfile:
+       path: /etc/sysconfig/rpc-rquotad
+       regexp: 'RPCRQUOTADOPTS=""'
+       line: RPCRQUOTADOPTS="-p 61004"
+       backup: yes

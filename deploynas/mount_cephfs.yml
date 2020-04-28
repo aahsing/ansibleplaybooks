@@ -1,0 +1,19 @@
+---
+- name: mount cephfs on nas node
+  hosts: nass
+  vars_files:
+    - ./group_vars/ceph_mons.yml
+  tasks:
+   - name: create mount directory
+     file: 
+      path: /cephfs
+      state: directory
+
+   - name: add cephfs mount entry to fstab file
+     lineinfile:
+      path: /etc/fstab
+      insertafter: EOF
+      line: '{{ mon0 }}:6789,{{ mon1 }}:6789,{{mon2 }}:6789:/  /cephfs  ceph name=admin,secretfile=/etc/ceph/ceph.client.admin.secret,noatime,_netdev  0 0'
+ 
+   - name: mount cephfs
+     command: mount /cephfs

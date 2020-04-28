@@ -1,0 +1,13 @@
+---
+- name: install nfs and samba server
+  hosts: nass
+  tasks:
+    - name: install nfs packages
+      yum: 
+        name: nfs-utils
+        state: latest
+   
+    - name: install samba packages
+      shell: yum localinstall -y *
+      args:
+        chdir: /home/appuser/Samba/x86_64/

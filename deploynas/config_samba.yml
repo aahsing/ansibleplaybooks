@@ -1,0 +1,34 @@
+---
+- name: configure samba
+  hosts: nass
+  vars_files:
+    - ./group_vars/nas.yml
+  tasks:
+    - name: backup original samba config file
+      command: mv /etc/samba/smb.conf /etc/samba/smb.conf.old
+    
+    - name: add new samba config file
+      blockinfile:
+        path: /etc/samba/smb.conf
+        create: yes
+        block: |
+           [global]
+               netbios name = {{ SMB_NAME }}
+               clustering = yes
+               ctdbd socket = /var/run/ctdb/ctdbd.socket
+               workgroup = SAMBA
+               security = user
+               passdb backend = tdbsam
+
+               load printers = no
+
+
+           [{{ SMB_NAME }}]
+                vfs objects = acl_xattr ceph
+                path = /
+                kernel share modes = no
+                browseable = yes
+                writable = yes
+                hosts allow = *
+                ceph:config_file = /etc/ceph/ceph.conf
+                ceph:user_id = admin
