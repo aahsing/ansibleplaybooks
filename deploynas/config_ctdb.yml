@@ -63,4 +63,8 @@
         src: ./files/nfs-linux-kernel-callout
         dest: /etc/ctdb/nfs-linux-kernel-callout
        
-         
+    - name: configure ctdb script options
+      lineinfile:
+        path: /etc/ctdb/script.options
+        line: 'CTDB_SAMBA_SKIP_SHARE_CHECK=yes'
+        create: yes         
