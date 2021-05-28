@@ -1,0 +1,15 @@
+# openpbs server installation
+---
+
+- name: install openpbs server packages
+  yum:
+    name: openpbs-server-ohpc
+    disable_gpg_check: yes
+    state: present
+
+
+- name: enable and start pbs service
+  service:
+    name: pbs
+    state: started
+    enabled: yes

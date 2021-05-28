@@ -1,0 +1,17 @@
+# openpbs installation
+---
+-
+
+# Add epel repository
+- name: enable epel repository for local use
+  yum:
+    name: "{{ epel_release_rpm }}"
+    disable_gpg_check: yes
+    state: present
+
+# Add openhpc repository
+- name: enable openHPC repository for local use
+  yum:
+    name: "{{ ohpc_release_rpm }}"
+    disable_gpg_check: yes
+    state: present

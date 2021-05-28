@@ -1,0 +1,3 @@
+# define pbs mom variables
+
+pbs_servername: headnode

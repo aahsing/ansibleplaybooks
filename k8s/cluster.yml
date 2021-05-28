@@ -1,0 +1,12 @@
+### Deploy kubernetes cluster
+## kube-ansible github
+---
+
+- hosts: masters
+  roles:
+
+- hosts: etcds
+  roles:
+
+- hosts: workers
+  roles:

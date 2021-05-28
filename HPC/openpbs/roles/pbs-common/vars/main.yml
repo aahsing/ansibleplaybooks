@@ -1,0 +1,21 @@
+# -------------------------------------------------------------------
+# Template input file to define local variables for use with
+# an openpbs installation
+# -------------------------------------------------------------------
+
+
+#
+# Release packages
+ohpc_release_rpm: "http://repos.openhpc.community/OpenHPC/2/CentOS_8/x86_64/ohpc-release-2-1.el8.x86_64.rpm"
+epel_release_rpm: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
+
+
+# headnode settings
+headnode:
+  - { c_name: "headnode", c_ip: "192.168.190.12" }
+
+
+# computenode settings
+computenode:
+  - { c_name: "compute1", c_ip: "192.168.190.13" }
+  - { c_name: "compute2", c_ip: "192.168.190.14" }

@@ -1,0 +1,5 @@
+# mpi library variables
+
+mpich_enabled: true
+
+openmpi_enabled: true

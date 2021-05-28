@@ -1,0 +1,14 @@
+[etcds]
+lnode0
+lnode1
+lnode2
+
+[masters]
+lnode0
+lnode1
+lnode2
+
+[workers]
+lnode1
+lnode2
+lnode3

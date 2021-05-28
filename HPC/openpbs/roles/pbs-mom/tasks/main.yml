@@ -1,0 +1,41 @@
+# openpbs execution host installation
+---
+
+- name: install openpbs execution host packages
+  yum:
+    name: openpbs-execution-ohpc
+    disable_gpg_check: yes
+    state: present
+
+- name: add PBS_SERVER config
+  lineinfile:
+    path: /etc/pbs.conf
+    regexp: '^PBS_SERVER'
+    line: 'PBS_SERVER={{ pbs_servername }}'
+    backrefs: yes
+
+- name: replace client hostname in file /var/spool/pbs/mom_priv/config
+  lineinfile:
+    path: /var/spool/pbs/mom_priv/config
+    regexp: '^\$clienthost'
+    line: '$clienthost {{ pbs_servername }}'
+    backrefs: yes
+
+- name: config job's staging and execution directory
+  tasks:
+    - name: create job's staging directory
+      file:
+        path: /staging
+        state: directory
+        mode: '1777'
+
+    - name: config staging directory for pbs
+      lineinfile:
+        path: /var/spool/pbs/mom_priv/config
+        line: '$jobdir_root  /staging
+
+- name: enable and start pbs service
+  service:
+    name: pbs
+    state: started
+    enabled: yes

@@ -1,0 +1,26 @@
+---
+
+# install mpich package
+- name: config MPI library
+  hosts: all
+  vars_files: ./vars/all.yml
+  tasks:
+    #install mpich packages if mpich is selected
+    - name: install mpich packages
+      yum:
+        name:
+          - mpich
+          - mpich-devel
+        state: present
+      when: mpich_enabled == true
+
+    #install openmpi packages if openmpi is selected
+    - name: install openmpi package
+      yum:
+        name:
+          - openmpi
+          - openmpi-devel
+      when: openmpi_enabled == true
+
+
+

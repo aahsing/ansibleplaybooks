@@ -1,0 +1,23 @@
+---
+# install mpich package
+- name: config MPI library
+  hosts: all
+  tasks:
+    - name: install mpich packages
+      yum:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - mpich
+        - mpich-devel
+      when: {{ mpich_enabled }} == 'true'
+
+    - name: install openmpi package
+      yum:
+        name:
+          - openmpi
+          - openmpi-devel
+      when: {{ openmpi_enabled }} == 'true'
+
+
+
