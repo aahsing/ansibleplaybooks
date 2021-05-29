@@ -4,9 +4,10 @@
 
 - hosts: masters
   roles:
+    - etcd
 
-- hosts: etcds
-  roles:
-
-- hosts: workers
-  roles:
+#- hosts: etcds
+#  roles:
+#
+#- hosts: workers
+#  roles:

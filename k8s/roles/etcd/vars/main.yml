@@ -1,6 +1,15 @@
+---
 # define etcd parameters
 
----
+etcd_data_dir: "/data/etcd"
+etcd_initial_token: "etcd_cluster"
+etcd_initial_cluster_state: "new"
+etcd_config_file: "/etc/etcd/etcd.conf"
 
 
+etcd_listen_addr: "{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}"
+etcd_listen_client_urls: "https://127.0.0.1:2379,https://{{ etcd_listen_addr }}:2379"
+etcd_listen_peer_urls: "https://{{ etcd_listen_addr }}:2380"
+etcd_advertise_client_urls: "https://{{ etcd_listen_addr }}:2379"
+etcd_initial_advertise_peer_urls: "https://{{ etcd_listen_addr }}:2380"
 

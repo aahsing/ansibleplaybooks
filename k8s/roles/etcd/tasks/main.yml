@@ -1,2 +1,29 @@
-# Deploy etcd
+---
+## deploy etcd
 
+### install etcd packages
+- name: install etcd packages
+    yum:
+      name: etcd
+      state: present
+
+- name: create etcd data directory
+  file:
+    path: {{ etcd_data_dir }}
+    state: directory
+    owner: etcd
+    group: etcd
+
+- name: copy etcd config template file
+  template:
+    src: etcd-config.yml.j2
+    dest: "{{ etcd_config_file }}"
+
+-name: enable and restart etcd
+systemd:
+  name: etcd
+  state: restarted
+  enabled: yes
+
+
+  
