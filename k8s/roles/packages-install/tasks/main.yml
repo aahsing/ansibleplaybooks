@@ -1,0 +1,54 @@
+---
+#### Install k8s packages and container runtime ####
+- name: add crio repo
+  shell: "{{ item }}"
+  with_items:
+    - 'curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/"{{ os_version }}"/devel:kubic:libcontainers:stable.repo'
+    - 'curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:"{{ crio_version }}".repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:"{{ crio_version }}"/"{{ os_version }}"/devel:kubic:libcontainers:stable:cri-o:"{{ crio_version }}".repo'
+
+
+
+
+- name: add kubernetes repo
+  blockinfile:
+    path: /etc/yum.repos.d/kubernetes.repo
+    create: yes
+    state: present
+    block: |
+      [kubernetes]
+      name=Kubernetes
+      baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
+      enabled=1
+      gpgcheck=1
+      repo_gpgcheck=1
+      gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+
+
+- name: instal kubeadm kubelet and container runtime packages
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - cri-o
+      - kubelet
+      - kubeadm
+      - kubectl
+
+- name: config container runtime cgroup driver
+  template:
+    src: crio.conf.j2
+    dest: /etc/crio/crio.conf
+
+- name: reload crio service
+  systemd:
+    name: crio
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+
+
+- name: enable kubelet service
+  systemd:
+    name: kubelet
+    enabled: yes

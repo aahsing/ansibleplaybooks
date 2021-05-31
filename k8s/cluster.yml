@@ -2,12 +2,16 @@
 ## kube-ansible github
 ---
 
-- hosts: masters
-  roles:
-    - etcd
-
 #- hosts: etcds
 #  roles:
-#
-#- hosts: workers
-#  roles:
+#    - etcd
+
+- hosts: all
+  roles:
+  #  - cluster-common
+    - packages-install
+ 
+
+
+
+
