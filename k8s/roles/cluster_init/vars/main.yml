@@ -1,9 +1,5 @@
 ---
 ## define cluster parameters
-apiserver-1: 192.168.190.27
-apiserver-2: 192.168.190.28
-apiserver-3: 192.168.190.29
-
 kube-api-vip: 192.168.190.220
 
 apiserver-dest-port: 443

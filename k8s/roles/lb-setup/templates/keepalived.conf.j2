@@ -1,0 +1,39 @@
+! /etc/keepalived/keepalived.conf
+! Configuration File for keepalived
+global_defs {
+    router_id {{ ansible_hostname }}
+}
+vrrp_script check_apiserver {
+  script "/etc/keepalived/check_apiserver.sh"
+  interval 3
+  weight -2
+  fall 10
+  rise 2
+}
+
+vrrp_instance VI_1 {
+    {% if ansible_hostname in groups["control_master"] -%}
+    state MASTER
+    {% endif -%}
+    {% if ansible_hostname in groups["control_slave"] -%}
+    state BACKUP
+    {% endif -%}
+    interface {{ vrrp_interface }}
+    virtual_router_id {{ router_id }}
+    {% if ansible_hostname in groups["control_master"] -%}
+    priority 101
+    {% endif -%}
+    {% if ansible_hostname in groups["control_slave"] %}
+    priority 100
+    {% endif -%}
+    authentication {
+        auth_type PASS
+        auth_pass Pass1234
+    }
+    virtual_ipaddress {
+        {{ kube_api_vip }}
+    }
+    track_script {
+        check_apiserver
+    }
+}

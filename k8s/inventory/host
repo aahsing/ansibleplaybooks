@@ -12,3 +12,10 @@ lnode2
 lnode1
 lnode2
 lnode3
+
+[control_master]
+lnode0
+
+[control_slave]
+lnode1
+lnode2

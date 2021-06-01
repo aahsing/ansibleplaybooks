@@ -6,12 +6,20 @@
 #  roles:
 #    - etcd
 
-- hosts: all
+### config loadbalancer for kube apiserver #####
+- hosts: control_master:control_slave
   roles:
-  #  - cluster-common
-    - packages-install
- 
+    - lb-setup
 
+#- hosts: all
+#  roles:
+#  #  - cluster-common
+#    - packages-install
+
+### kube init
+- hosts: control_master
+  roles:
+    - cluster-init
 
 
 

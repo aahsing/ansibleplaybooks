@@ -6,30 +6,30 @@
 ####create load balancer for kube-apiserver ####
 #### run as static pods #########
 
-- name: create keepalived directory on nodes
-  file:
-    path: /etc/keepalived
-    state: directory
 
-- name: create haproxy directory on nodes
-  file:
-    path: /etc/haproxy
-    state: directory
 
-- name: haproxy config file
-  template:
-    src: haproxy.conf.j2
-    dest: /etc/haproxy/haproxy.cfg
 
-- name: copy haproxy manifests to nodes
-  template:
-    src: haproxy.yaml.j2
-    dest: /etc/kubernetes/manifests/haproxy.yaml
 
-- name: copy keepalived manifests to nodes
-  template:
-    src: keepalived.yaml.j2
-    dest: /etc/kubernetes/manifests/keepalived.yaml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

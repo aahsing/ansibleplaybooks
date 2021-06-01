@@ -1,0 +1,8 @@
+---
+## define lb parameters
+kube_api_vip: 192.168.190.220
+
+apiserver_dest_port: 443
+apiserver_src_port: 6443
+router_id: 60
+vrrp_interface: eth0

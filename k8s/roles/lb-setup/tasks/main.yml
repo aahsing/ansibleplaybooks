@@ -1,0 +1,31 @@
+---
+### config haproxy and keepalived configuration file
+
+## create haproxy config file
+
+## use static pods method to deploy lb service
+
+- name: create haproxy directory on lb nodes
+  file:
+    path: /etc/haproxy
+    state: directory
+
+- name: create keepalived directory on lb nodes
+  file:
+    path: /etc/keepalived
+    state: directory
+
+- name: copy haproxy file to every lb nodes
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+
+- name: copy keepalived check apiserver script to lb nodes
+  template:
+    src: check_apiserver.sh.j2
+    dest: /etc/keepalived/check_apiserver.sh
+
+- name: copy keepalived file to lb  node
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
