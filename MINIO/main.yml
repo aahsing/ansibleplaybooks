@@ -1,0 +1,24 @@
+- name: Deploy MINIO server
+  hosts: nodes
+  vars_files:
+    - ./group_vars/main.yml
+  #tasks:
+  #  - name: install MINIO server from remote rpm package
+  #    dnf:
+  #      name: "{{ repourl }}"
+  #      state: present
+  #      disable_gpg_check: yes
+
+    - name: create MINIO group
+      group:
+        name: "{{ minio_group }}"
+        state: present
+
+    - name: create MINIO user
+      user:
+        name: "{{ minio_user }}"
+        group: "{{ minio_group }}"
+        system: "yes"
+        shell: "/usr/sbin/nologin"
+
+
