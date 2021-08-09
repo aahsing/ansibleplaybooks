@@ -1,3 +1,28 @@
 repourl: https://dl.min.io/server/minio/release/linux-amd64/minio-20210730000200.0.0.x86_64.rpm
 minio_group: minio-user
 minio_user: minio-user
+minio_server_envfile: /etc/default/minio
+minio_server_datadirs:
+  - '/miniodata_1'
+  - '/miniodata_2'
+  - '/miniodata_3'
+  - '/miniodata_4'
+
+minio_server_addr: '9091'
+minio_access_key: 'UadT3tXRta'
+minio_secret_key: '9leB9UL4B7|<@Ye>?Da&UI|kS$Yr]4'
+minio_root_user: 'iTOWIoG8GZ'
+minio_root_password: 'x!e3G_bCca_*SARpxgb!@$dy,1x1iO'
+minio_server_cluster_nodes: 'http://mnode{1...4}/miniodata_{1...4}'
+#  - 'http://mnode1'
+#  - 'http://mnode2'
+#  - 'http://mnode3'
+#  - 'http://mnode4'
+
+minio_server_disks:
+  - '/dev/sdb'
+  - '/dev/sdc'
+  - '/dev/sdd'
+  - '/dev/sde'
+
+minio_server_opts: ''

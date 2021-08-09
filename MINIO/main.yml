@@ -2,23 +2,63 @@
   hosts: nodes
   vars_files:
     - ./group_vars/main.yml
-  #tasks:
+  tasks:
   #  - name: install MINIO server from remote rpm package
   #    dnf:
   #      name: "{{ repourl }}"
   #      state: present
   #      disable_gpg_check: yes
 
-    - name: create MINIO group
-      group:
-        name: "{{ minio_group }}"
-        state: present
+  #  - name: create MINIO group
+  #    group:
+  #      name: "{{ minio_group }}"
+  #      state: present
 
-    - name: create MINIO user
-      user:
-        name: "{{ minio_user }}"
+  #  - name: create MINIO user
+  #    user:
+  #      name: "{{ minio_user }}"
+  #      group: "{{ minio_group }}"
+  #      system: "yes"
+  #      shell: "/sbin/nologin"
+
+  #  - name: create disk filesystems
+  #    filesystem:
+  #      fstype: xfs
+  #      dev: "{{ item }}"
+  #      opts: -f
+  #    with_items: "{{ minio_server_disks }}"
+
+
+  #  - name: create data diretory
+  #    file:
+  #      path: "{{ item }}"
+  #      state: directory
+  #      owner: "{{ minio_user }}"
+  #      group: "{{ minio_group }}"
+  #    with_items: "{{ minio_server_datadirs }}"
+  #
+
+  #  - name: add minio data fs to /etc/fstab file
+  #    blockinfile:
+  #      path: /etc/fstab
+  #      block: |
+  #        /dev/sdb    /miniodata_1    xfs   defaults  0  0
+  #        /dev/sdc    /miniodata_2    xfs   defaults  0  0
+  #        /dev/sdd    /miniodata_3    xfs   defaults  0  0
+  #        /dev/sde    /miniodata_4    xfs   defaults  0  0
+
+    - name: create minio server env file
+      template:
+        src: minio_env.j2
+        dest: "{{ minio_server_envfile }}"
+        owner: root
         group: "{{ minio_group }}"
-        system: "yes"
-        shell: "/usr/sbin/nologin"
+
+    - name: enable and restart minio service
+      systemd:
+        name: minio
+        state: started
+        enabled: true
+ 
 
 
